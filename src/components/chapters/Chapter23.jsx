@@ -23,7 +23,7 @@ export default function Chapter23({ onComplete }) {
   return (
     <div className="lab-container flex-column" style={{gap: '1.5rem', alignItems: 'center'}}>
       <div className="glass-panel flex-column" style={{padding: '1.5rem', width: '100%', maxWidth: '500px', gap: '1rem'}}>
-        <div style={{display: 'flex', justifyContent: 'between', alignItems: 'center'}}>
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem'}}>
           <span style={{fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-cyan)'}}>{steps[step].title}</span>
           <button data-testid="ch23-step-btn" className="btn btn-primary" onClick={handleStep}>Step Cycle</button>
         </div>

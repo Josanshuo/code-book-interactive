@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import {
   Zap, CheckCircle2, AlertCircle, HelpCircle,
   BookOpen, Trophy, Compass, Code as CodeIcon,
-  Menu, X
+  Menu, X, Search, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { chaptersData } from './data/chaptersData';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -87,6 +87,7 @@ function App() {
   });
   const [showHint, setShowHint] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [search, setSearch] = useState('');
   const isMobileRef = useRef(false);
 
   // Track viewport size to auto-show sidebar on desktop
@@ -114,6 +115,13 @@ function App() {
   const activeChapter = chaptersData.find(c => c.num === activeChapterNum) || chaptersData[0];
   const LabComponent = labsMap[activeChapterNum];
 
+  // Centralized chapter selection so every entry point behaves the same
+  const selectChapter = useCallback((num) => {
+    setActiveChapterNum(num);
+    setShowHint(false);
+    if (isMobileRef.current) setSidebarOpen(false);
+  }, []);
+
   // Memoize to avoid passing a new function reference on every render
   const handleChapterComplete = useCallback((isSuccess) => {
     setCompletedChapters(prev => {
@@ -130,6 +138,43 @@ function App() {
   const completedCount = Object.keys(completedChapters).length;
   const progressPercent = Math.round((completedCount / chaptersData.length) * 100);
 
+  // Prev / Next sequential navigation
+  const activeIndex = chaptersData.findIndex(c => c.num === activeChapterNum);
+  const prevChapter = activeIndex > 0 ? chaptersData[activeIndex - 1] : null;
+  const nextChapter = activeIndex < chaptersData.length - 1 ? chaptersData[activeIndex + 1] : null;
+
+  // Keyboard navigation: ← / → move between chapters, but never while the user
+  // is typing in a field or interacting with a simulator.
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target;
+      const tag = t.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || t.isContentEditable) return;
+      if (t.closest && t.closest('.right-panel')) return; // don't hijack the simulator
+      if (e.key === 'ArrowLeft' && prevChapter) {
+        selectChapter(prevChapter.num);
+      } else if (e.key === 'ArrowRight' && nextChapter) {
+        selectChapter(nextChapter.num);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [prevChapter, nextChapter, selectChapter]);
+
+  // Filter the sidebar list by the search query (matches number, title or summary)
+  const visibleChapters = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return chaptersData;
+    return chaptersData.filter(ch =>
+      ch.title.toLowerCase().includes(q) ||
+      String(ch.num) === q ||
+      `chapter ${ch.num}`.includes(q) ||
+      ch.summary.toLowerCase().includes(q)
+    );
+  }, [search]);
+
   return (
     <div className="app-container">
       {/* Sidebar overlay for mobile */}
@@ -142,68 +187,94 @@ function App() {
       {/* Sidebar Navigation */}
       <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`} aria-label="Chapter navigation">
         <header className="sidebar-header">
-          <Zap size={24} color="var(--color-cyan)" style={{filter: 'drop-shadow(0 0 8px var(--color-cyan-glow))'}} />
-          <h1 className="sidebar-logo">CODE LABS</h1>
+          <span className="sidebar-logo-mark" aria-hidden="true">
+            <Zap size={20} />
+          </span>
+          <div className="sidebar-brand">
+            <h1 className="sidebar-logo">CODE LABS</h1>
+            <span className="sidebar-tagline">Interactive Companion</span>
+          </div>
           {/* Close button inside sidebar — visible only on mobile via CSS */}
           <button
-            className="sidebar-toggle"
+            className="sidebar-toggle sidebar-close"
             onClick={() => setSidebarOpen(false)}
             aria-label="Close sidebar"
-            style={{ marginLeft: 'auto' }}
           >
             <X size={20} />
           </button>
         </header>
 
-        {/* Progress Bar */}
-        <div style={{padding: '1rem 1.5rem', borderBottom: 'var(--border-glass)'}}>
-          <div style={{display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.5rem'}}>
-            <span style={{display: 'flex', alignItems: 'center', gap: '0.25rem'}}><Trophy size={12} /> Progress</span>
-            <span data-testid="progress-text">{completedCount} / {chaptersData.length} ({progressPercent}%)</span>
+        {/* Progress */}
+        <div className="progress-section">
+          <div className="progress-labels">
+            <span className="progress-label"><Trophy size={13} /> Your progress</span>
+            <span className="progress-value" data-testid="progress-text">{completedCount} / {chaptersData.length} ({progressPercent}%)</span>
           </div>
           <div
+            className="progress-track"
             role="progressbar"
             aria-valuenow={progressPercent}
             aria-valuemin={0}
             aria-valuemax={100}
             aria-label="Chapter completion progress"
-            style={{height: '6px', background: 'var(--bg-tertiary)', borderRadius: '3px', overflow: 'hidden'}}
           >
-            <div style={{height: '100%', width: `${progressPercent}%`, background: 'linear-gradient(90deg, var(--color-cyan) 0%, var(--color-purple) 100%)', transition: 'width 0.3s ease'}}></div>
+            <div className="progress-fill" style={{ width: `${progressPercent}%` }}></div>
           </div>
         </div>
 
+        {/* Search */}
+        <div className="sidebar-search">
+          <Search size={16} className="sidebar-search-icon" aria-hidden="true" />
+          <input
+            type="text"
+            className="sidebar-search-input"
+            placeholder="Search chapters…"
+            aria-label="Search chapters"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          {search && (
+            <button
+              className="sidebar-search-clear"
+              onClick={() => setSearch('')}
+              aria-label="Clear search"
+            >
+              <X size={14} />
+            </button>
+          )}
+        </div>
+
         <nav className="sidebar-chapters" aria-label="Chapter list">
-          {chaptersData.map((ch) => {
+          {visibleChapters.map((ch) => {
             const isCompleted = !!completedChapters[ch.num];
             const isActive = ch.num === activeChapterNum;
             return (
               <button
                 key={ch.num}
-                className={`chapter-btn ${isActive ? 'active' : ''}`}
+                className={`chapter-btn ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
                 aria-current={isActive ? 'true' : undefined}
                 aria-label={`Chapter ${ch.num}: ${ch.title}${isCompleted ? ', completed' : ''}`}
-                onClick={() => {
-                  setActiveChapterNum(ch.num);
-                  setShowHint(false);
-                  if (isMobileRef.current) setSidebarOpen(false);
-                }}
+                onClick={() => selectChapter(ch.num)}
               >
-                <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
+                <span className="chapter-index" aria-hidden="true">{ch.num}</span>
+                <span className="chapter-text">
                   <span className="chapter-num">Chapter {ch.num}</span>
-                  {isCompleted && <CheckCircle2 size={14} color="var(--color-emerald)" />}
-                </div>
-                <span className="chapter-title">{ch.title}</span>
+                  <span className="chapter-title">{ch.title}</span>
+                </span>
+                {isCompleted && <CheckCircle2 className="chapter-check" size={16} />}
               </button>
             );
           })}
+          {visibleChapters.length === 0 && (
+            <p className="sidebar-empty">No chapters match “{search}”.</p>
+          )}
         </nav>
       </aside>
 
       {/* Main Workspace */}
       <main className="main-content" aria-label="Chapter workspace">
         <header className="app-header">
-          <div style={{display: 'flex', alignItems: 'center', gap: '0.75rem'}}>
+          <div className="header-left">
             <button
               className="sidebar-toggle"
               onClick={() => setSidebarOpen(true)}
@@ -216,15 +287,39 @@ function App() {
               <h2 className="header-chapter-title">{activeChapter.title}</h2>
             </div>
           </div>
-          <div className="header-subtitle">
-            <BookOpen size={18} color="var(--text-secondary)" />
-            <span style={{fontSize: '0.9rem', color: 'var(--text-secondary)'}}>Charles Petzold Companion</span>
+
+          <div className="header-right">
+            <div className="header-subtitle">
+              <BookOpen size={16} />
+              <span>Charles Petzold Companion</span>
+            </div>
+            <div className="chapter-nav" role="group" aria-label="Chapter navigation">
+              <button
+                className="chapter-nav-btn"
+                onClick={() => prevChapter && selectChapter(prevChapter.num)}
+                disabled={!prevChapter}
+                aria-label={prevChapter ? `Previous chapter: ${prevChapter.title}` : 'No previous chapter'}
+                title="Previous chapter (←)"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <span className="chapter-nav-counter">{activeChapter.num} / {chaptersData.length}</span>
+              <button
+                className="chapter-nav-btn"
+                onClick={() => nextChapter && selectChapter(nextChapter.num)}
+                disabled={!nextChapter}
+                aria-label={nextChapter ? `Next chapter: ${nextChapter.title}` : 'No next chapter'}
+                title="Next chapter (→)"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
           </div>
         </header>
 
         <div className="workspace">
           {/* Left Panel: Info, Summary and Challenge */}
-          <section className="left-panel glass-panel" style={{padding: '1.5rem'}}>
+          <section className="left-panel glass-panel">
             <div className="panel-title"><Compass size={16} /> Concept Overview</div>
             <div className="summary-text">
               <p>{activeChapter.summary}</p>
@@ -246,18 +341,17 @@ function App() {
               </div>
               <p className="challenge-desc">{activeChapter.challenge}</p>
 
-              <div style={{marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+              <div className="challenge-actions">
                 <button
-                  className="btn btn-secondary"
-                  style={{padding: '0.4rem 0.8rem', fontSize: '0.8rem', alignSelf: 'flex-start'}}
+                  className="btn btn-secondary btn-sm"
                   onClick={() => setShowHint(!showHint)}
                   aria-expanded={showHint}
                   data-testid="hint-toggle-btn"
                 >
-                  <HelpCircle size={12} /> {showHint ? 'Hide Hint' : 'Show Hint'}
+                  <HelpCircle size={14} /> {showHint ? 'Hide Hint' : 'Show Hint'}
                 </button>
                 {showHint && (
-                  <div style={{background: 'rgba(255,255,255,0.03)', border: '1px dashed rgba(255,255,255,0.1)', padding: '0.75rem', borderRadius: '6px', fontSize: '0.8rem', color: 'var(--color-amber)', lineHeight: '1.4'}} data-testid="hint-text">
+                  <div className="hint-text" data-testid="hint-text">
                     {activeChapter.hint}
                   </div>
                 )}
@@ -267,7 +361,7 @@ function App() {
 
           {/* Right Panel: The Interactive Lab */}
           <section className="right-panel glass-panel">
-            <div className="panel-title" style={{padding: '1rem 1.5rem 0.5rem 1.5rem', borderBottom: 'none'}}>
+            <div className="panel-title panel-title-flush">
               <CodeIcon size={16} color="var(--color-cyan)" /> Interactive Simulator
             </div>
             <ErrorBoundary key={activeChapterNum}>

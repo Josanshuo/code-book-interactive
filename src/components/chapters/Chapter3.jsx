@@ -53,7 +53,7 @@ export default function Chapter3({ onComplete }) {
   };
 
   return (
-    <div className="lab-container flex-column" style={{alignItems: 'center', justify: 'center', gap: '2rem'}}>
+    <div className="lab-container flex-column" style={{alignItems: 'center', justifyContent: 'center', gap: '2rem'}}>
       <div className="braille-grid">
         <button className={`braille-dot ${dots[0] ? 'active' : ''}`} onClick={() => toggleDot(0)} title="Dot 1" data-testid="ch3-dot-1"></button>
         <button className={`braille-dot ${dots[3] ? 'active' : ''}`} onClick={() => toggleDot(3)} title="Dot 4" data-testid="ch3-dot-4"></button>

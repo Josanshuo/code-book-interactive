@@ -26,7 +26,7 @@ export default function Chapter2({ onComplete }) {
     <div className="lab-container">
       <div className="flex-column" style={{gap: '1.5rem'}}>
         <div className="glass-card">
-          <label style={{display: 'flex', justifyContent: 'between', alignItems: 'center', width: '100%', marginBottom: '0.5rem'}}>
+          <label style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '0.5rem'}}>
             <span>Number of Signals (Bits): <strong style={{color: 'var(--color-cyan)', fontSize: '1.2rem'}}>{bits}</strong></span>
           </label>
           <input 

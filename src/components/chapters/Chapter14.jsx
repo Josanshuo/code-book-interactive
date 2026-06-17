@@ -33,7 +33,7 @@ export default function Chapter14({ onComplete }) {
         <ToggleSwitch label="Carry In (Cin)" value={inCin} onChange={setInCin} testId="ch14-input-cin" />
       </div>
 
-      <svg width="460" height="200" viewBox="0 0 460 200" style={{background: 'rgba(0,0,0,0.3)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)'}}>
+      <svg height="200" viewBox="0 0 460 200" style={{width: '100%', maxWidth: '460px', height: 'auto', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)'}}>
         {/* Schematic drawing of adders block */}
         <rect x="150" y="50" width="160" height="100" rx="6" fill="#1e293b" stroke="white" strokeWidth="2" />
         <text x="195" y="105" fill="white" fontSize="16" fontFamily="sans-serif" fontWeight="bold">FULL ADDER</text>

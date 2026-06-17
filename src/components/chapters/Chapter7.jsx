@@ -16,7 +16,7 @@ export default function Chapter7({ onComplete }) {
 
   return (
     <div className="lab-container flex-column" style={{gap: '1.5rem', alignItems: 'center'}}>
-      <svg width="480" height="220" viewBox="0 0 480 220" style={{background: 'rgba(0,0,0,0.3)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)'}}>
+      <svg height="220" viewBox="0 0 480 220" style={{width: '100%', maxWidth: '480px', height: 'auto', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)'}}>
         {/* Primary loop (low voltage) */}
         {/* Sender Morse Key */}
         <rect x="30" y="140" width="40" height="10" fill="#4b5563" />

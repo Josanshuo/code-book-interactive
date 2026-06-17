@@ -27,7 +27,7 @@ export default function Chapter6({ onComplete }) {
         <ToggleSwitch label="Switch C" value={switchC} onChange={setSwitchC} testId="ch6-switch-c" />
       </div>
 
-      <svg width="420" height="200" viewBox="0 0 420 200" style={{background: 'rgba(0,0,0,0.3)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)'}}>
+      <svg height="200" viewBox="0 0 420 200" style={{width: '100%', maxWidth: '420px', height: 'auto', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)'}}>
         {/* Left terminal */}
         <line x1="20" y1="100" x2="60" y2="100" stroke={isLit ? "var(--color-cyan)" : "#374151"} strokeWidth="3" />
         

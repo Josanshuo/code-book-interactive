@@ -15,7 +15,7 @@ export default function Chapter4({ onComplete }) {
 
   return (
     <div className="lab-container flex-column" style={{alignItems: 'center', gap: '1.5rem'}}>
-      <svg width="400" height="260" viewBox="0 0 400 260" style={{background: 'rgba(0,0,0,0.3)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)'}}>
+      <svg height="260" viewBox="0 0 400 260" style={{width: '100%', maxWidth: '400px', height: 'auto', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)'}}>
         {/* Battery */}
         <rect x="50" y="90" width="80" height="40" rx="3" fill="#1f2937" stroke="#4b5563" strokeWidth="2" />
         <rect x="130" y="100" width="10" height="20" rx="2" fill="#d97706" />

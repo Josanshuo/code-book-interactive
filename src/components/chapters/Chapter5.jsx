@@ -20,7 +20,7 @@ export default function Chapter5({ onComplete }) {
 
   return (
     <div className="lab-container flex-column" style={{gap: '1.5rem', alignItems: 'center'}}>
-      <svg width="500" height="220" viewBox="0 0 500 220" style={{background: 'rgba(0,0,0,0.3)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)'}}>
+      <svg height="220" viewBox="0 0 500 220" style={{width: '100%', maxWidth: '500px', height: 'auto', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)'}}>
         {/* House Left (Sender) */}
         <rect x="20" y="80" width="80" height="70" fill="#1e293b" />
         <polygon points="10,80 60,40 110,80" fill="#0f172a" />

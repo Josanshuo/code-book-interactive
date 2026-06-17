@@ -43,7 +43,7 @@ export default function Chapter17({ onComplete }) {
         </button>
       </div>
 
-      <svg width="400" height="180" viewBox="0 0 400 180" style={{background: 'rgba(0,0,0,0.3)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)'}}>
+      <svg height="180" viewBox="0 0 400 180" style={{width: '100%', maxWidth: '400px', height: 'auto', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)'}}>
         {/* Flip Flop Chip representation */}
         <rect x="120" y="30" width="160" height="120" rx="6" fill="#1e293b" stroke="white" strokeWidth="2" />
         <text x="145" y="100" fill="white" fontSize="16" fontFamily="monospace" fontWeight="bold">D FLIP-FLOP</text>

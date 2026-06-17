@@ -677,3 +677,258 @@ body {
   flex: 1;
   outline: none;
 }
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Hamburger toggle — hidden on desktop */
+.sidebar-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+.sidebar-toggle:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+.sidebar-toggle:focus-visible {
+  outline: 2px solid var(--color-cyan);
+  outline-offset: 2px;
+}
+
+/* Sidebar overlay backdrop — hidden by default */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 99;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.sidebar-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Header subtitle — display defined here (not inline) so media queries can hide it */
+.header-subtitle {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* Responsive SVG utility */
+.responsive-svg {
+  width: 100%;
+  height: auto;
+}
+
+/* ---- Breakpoint: ≤ 900px — Sidebar collapses ---- */
+@media (max-width: 900px) {
+  .sidebar-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+  }
+
+  .sidebar-overlay {
+    display: block;
+  }
+
+  .app-header {
+    padding: 0 1rem;
+  }
+
+  .header-chapter-title {
+    font-size: 1.1rem;
+  }
+}
+
+/* ---- Breakpoint: ≤ 768px — Tighter spacing ---- */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 60px;
+  }
+
+  .workspace {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .left-panel {
+    gap: 1rem;
+  }
+
+  .right-panel {
+    gap: 1rem;
+  }
+
+  .glass-card {
+    padding: 1rem;
+  }
+
+  .lab-container {
+    padding: 1rem;
+    min-height: 300px;
+  }
+
+  .breadboard {
+    padding: 1rem;
+  }
+
+  .panel-title {
+    font-size: 1rem;
+  }
+
+  .summary-text {
+    font-size: 0.9rem;
+  }
+
+  .header-subtitle {
+    display: none;
+  }
+
+  /* Responsive grids */
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid-8 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ---- Breakpoint: ≤ 480px — Ultra-compact mobile ---- */
+@media (max-width: 480px) {
+  :root {
+    --header-height: 54px;
+    --sidebar-width: 280px;
+  }
+
+  .app-header {
+    padding: 0 0.75rem;
+  }
+
+  .header-chapter-num {
+    font-size: 0.7rem;
+  }
+
+  .header-chapter-title {
+    font-size: 0.95rem;
+  }
+
+  .workspace {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .glass-card {
+    padding: 0.75rem;
+  }
+
+  .glass-panel {
+    border-radius: 8px;
+  }
+
+  .lab-container {
+    padding: 0.75rem;
+    min-height: 250px;
+  }
+
+  .breadboard {
+    padding: 0.75rem;
+    border-width: 2px;
+  }
+
+  .challenge-box {
+    padding: 1rem;
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .switch-control {
+    min-width: 60px;
+    padding: 0.5rem;
+  }
+
+  .braille-grid {
+    grid-template-columns: repeat(2, 32px);
+    grid-template-rows: repeat(3, 32px);
+    gap: 8px;
+    padding: 1rem;
+  }
+
+  .braille-dot {
+    width: 32px;
+    height: 32px;
+  }
+
+  .neighborhood {
+    height: 180px;
+    padding: 1rem;
+  }
+
+  .house {
+    width: 70px;
+    height: 80px;
+  }
+
+  .house::after {
+    top: -24px;
+    left: -5px;
+    border-left: 40px solid transparent;
+    border-right: 40px solid transparent;
+    border-bottom: 24px solid #0f172a;
+  }
+
+  .window {
+    width: 20px;
+    height: 20px;
+    top: 20px;
+    left: 25px;
+  }
+
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+  .grid-8 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .terminal-window {
+    font-size: 0.8rem;
+    min-height: 200px;
+  }
+}

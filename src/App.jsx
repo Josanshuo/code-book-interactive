@@ -1,10 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Zap, CheckCircle2, AlertCircle, HelpCircle,
-  BookOpen, Trophy, Compass, Code as CodeIcon
+  BookOpen, Trophy, Compass, Code as CodeIcon,
+  Menu, X
 } from 'lucide-react';
 import { chaptersData } from './data/chaptersData';
 import ErrorBoundary from './components/ErrorBoundary';
+
+const MOBILE_BREAKPOINT = 900;
 
 // Import labs from individual chapter files
 import Chapter1 from './components/chapters/Chapter1';
@@ -83,6 +86,21 @@ function App() {
     }
   });
   const [showHint, setShowHint] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isMobileRef = useRef(false);
+
+  // Track viewport size to auto-show sidebar on desktop
+  useEffect(() => {
+    const checkMobile = () => {
+      isMobileRef.current = window.innerWidth <= MOBILE_BREAKPOINT;
+      if (!isMobileRef.current) {
+        setSidebarOpen(false); // reset — sidebar is always visible via CSS on desktop
+      }
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Sync completed chapters to localStorage
   useEffect(() => {
@@ -114,11 +132,27 @@ function App() {
 
   return (
     <div className="app-container">
+      {/* Sidebar overlay for mobile */}
+      <div
+        className={`sidebar-overlay ${sidebarOpen ? 'visible' : ''}`}
+        onClick={() => setSidebarOpen(false)}
+        aria-hidden="true"
+      />
+
       {/* Sidebar Navigation */}
-      <aside className="sidebar" aria-label="Chapter navigation">
+      <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`} aria-label="Chapter navigation">
         <header className="sidebar-header">
           <Zap size={24} color="var(--color-cyan)" style={{filter: 'drop-shadow(0 0 8px var(--color-cyan-glow))'}} />
           <h1 className="sidebar-logo">CODE LABS</h1>
+          {/* Close button inside sidebar — visible only on mobile via CSS */}
+          <button
+            className="sidebar-toggle"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close sidebar"
+            style={{ marginLeft: 'auto' }}
+          >
+            <X size={20} />
+          </button>
         </header>
 
         {/* Progress Bar */}
@@ -152,6 +186,7 @@ function App() {
                 onClick={() => {
                   setActiveChapterNum(ch.num);
                   setShowHint(false);
+                  if (isMobileRef.current) setSidebarOpen(false);
                 }}
               >
                 <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
@@ -168,11 +203,20 @@ function App() {
       {/* Main Workspace */}
       <main className="main-content" aria-label="Chapter workspace">
         <header className="app-header">
-          <div className="header-chapter-info">
-            <span className="header-chapter-num">CHAPTER {activeChapter.num}</span>
-            <h2 className="header-chapter-title">{activeChapter.title}</h2>
+          <div style={{display: 'flex', alignItems: 'center', gap: '0.75rem'}}>
+            <button
+              className="sidebar-toggle"
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Open sidebar"
+            >
+              <Menu size={22} />
+            </button>
+            <div className="header-chapter-info">
+              <span className="header-chapter-num">CHAPTER {activeChapter.num}</span>
+              <h2 className="header-chapter-title">{activeChapter.title}</h2>
+            </div>
           </div>
-          <div style={{display: 'flex', gap: '0.75rem', alignItems: 'center'}}>
+          <div className="header-subtitle">
             <BookOpen size={18} color="var(--text-secondary)" />
             <span style={{fontSize: '0.9rem', color: 'var(--text-secondary)'}}>Charles Petzold Companion</span>
           </div>

@@ -44,6 +44,19 @@
   padding: 0;
 }
 
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
@@ -54,6 +67,7 @@ body {
 }
 
 /* Scrollbars */
+/* Scrollbars — WebKit */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -67,6 +81,11 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
+}
+/* Scrollbars — Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-tertiary) var(--bg-primary);
 }
 
 /* Glassmorphism Classes */
@@ -147,7 +166,9 @@ body {
   font-weight: 800;
   background: linear-gradient(to right, var(--color-cyan), var(--color-purple));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .sidebar-chapters {
@@ -172,6 +193,11 @@ body {
   flex-direction: column;
   gap: 0.25rem;
   transition: all 0.2s ease;
+}
+
+.chapter-btn:focus-visible {
+  outline: 2px solid var(--color-cyan);
+  outline-offset: 2px;
 }
 
 .chapter-btn:hover {
@@ -342,14 +368,7 @@ body {
   line-height: 1.5;
 }
 
-.challenge-status {
-  margin-top: 0.25rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+
 
 /* Lab Interface Common Elements */
 .lab-container {
@@ -375,6 +394,11 @@ body {
   justify-content: center;
   gap: 0.5rem;
   transition: all 0.2s ease;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-cyan);
+  outline-offset: 2px;
 }
 
 .btn-primary {
@@ -419,6 +443,11 @@ body {
   user-select: none;
   min-width: 70px;
   transition: all 0.2s ease;
+}
+
+.switch-control:focus-visible {
+  outline: 2px solid var(--color-cyan);
+  outline-offset: 2px;
 }
 
 .switch-control:hover {
@@ -572,6 +601,11 @@ body {
   border: 2px solid rgba(255,255,255,0.1);
   cursor: pointer;
   transition: all 0.15s ease;
+}
+
+.braille-dot:focus-visible {
+  outline: 2px solid var(--color-cyan);
+  outline-offset: 2px;
 }
 
 .braille-dot.active {

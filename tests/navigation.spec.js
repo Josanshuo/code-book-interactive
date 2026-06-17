@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Navigation and Layout', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to the local homepage
     await page.goto('/');
   });
 
@@ -16,50 +15,67 @@ test.describe('Navigation and Layout', () => {
     // Chapter 1 header title and number
     await expect(page.locator('.header-chapter-num')).toHaveText('CHAPTER 1');
     await expect(page.locator('.header-chapter-title')).toHaveText('Best Friends');
-    
+
     // Concept overview panel check
     await expect(page.locator('.summary-text')).toContainText('communicate at night');
   });
 
-  test('should navigate to different chapters via sidebar', async ({ page }) => {
-    // Click on Chapter 2 in the sidebar using exact match
-    const chapter2Btn = page.locator('button.chapter-btn').filter({ has: page.locator('.chapter-num', { hasText: /^Chapter 2$/ }) });
+  test('should navigate to Chapter 2 via sidebar', async ({ page }) => {
+    const chapter2Btn = page.locator('button.chapter-btn').filter({
+      has: page.locator('.chapter-num', { hasText: /^Chapter 2$/ }),
+    });
     await chapter2Btn.click();
 
-    // Verify main workspace updates to Chapter 2
     await expect(page.locator('.header-chapter-num')).toHaveText('CHAPTER 2');
     await expect(page.locator('.header-chapter-title')).toHaveText('Codes and Combinations');
     await expect(page.locator('.summary-text')).toContainText('combinatorics');
+  });
 
-    // Click on Chapter 3 in the sidebar using exact match
-    const chapter3Btn = page.locator('button.chapter-btn').filter({ has: page.locator('.chapter-num', { hasText: /^Chapter 3$/ }) });
+  test('should navigate to Chapter 3 via sidebar', async ({ page }) => {
+    const chapter3Btn = page.locator('button.chapter-btn').filter({
+      has: page.locator('.chapter-num', { hasText: /^Chapter 3$/ }),
+    });
     await chapter3Btn.click();
 
-    // Verify workspace updates to Chapter 3
     await expect(page.locator('.header-chapter-num')).toHaveText('CHAPTER 3');
     await expect(page.locator('.header-chapter-title')).toHaveText('Braille and Binary Codes');
     await expect(page.locator('.summary-text')).toContainText('Louis Braille');
   });
 
   test('should toggle the challenge hint correctly', async ({ page }) => {
-    // Start on Chapter 1
-    const hintBtn = page.locator('.challenge-box button');
+    const hintBtn = page.getByTestId('hint-toggle-btn');
     await expect(hintBtn).toHaveText(/Show Hint/);
 
-    // Ensure the hint text container is not visible initially
-    await expect(page.locator('text=Click the flashlight button quickly 4 times')).not.toBeVisible();
+    // Verify hint is not visible initially
+    await expect(page.getByTestId('hint-text')).not.toBeVisible();
 
-    // Click to show hint
+    // Show hint
     await hintBtn.click();
     await expect(hintBtn).toHaveText(/Hide Hint/);
-    
-    // Check that the hint text is now visible
-    const hintBox = page.getByText("Click the flashlight button quickly 4 times", { exact: false });
-    await expect(hintBox).toBeVisible();
+    await expect(hintBtn).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.getByTestId('hint-text')).toBeVisible();
 
-    // Click to hide hint
+    // Hide hint
     await hintBtn.click();
     await expect(hintBtn).toHaveText(/Show Hint/);
-    await expect(hintBox).not.toBeVisible();
+    await expect(hintBtn).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.getByTestId('hint-text')).not.toBeVisible();
+  });
+
+  test('should show progress bar with accessible attributes', async ({ page }) => {
+    const progressBar = page.locator('[role="progressbar"]');
+    await expect(progressBar).toBeVisible();
+    await expect(progressBar).toHaveAttribute('aria-valuemin', '0');
+    await expect(progressBar).toHaveAttribute('aria-valuemax', '100');
+    await expect(progressBar).toHaveAttribute('aria-valuenow', '0');
+  });
+
+  test('should have accessible sidebar navigation', async ({ page }) => {
+    const nav = page.locator('nav[aria-label="Chapter list"]');
+    await expect(nav).toBeVisible();
+
+    // Active chapter should have aria-current
+    const activeBtn = page.locator('button.chapter-btn.active');
+    await expect(activeBtn).toHaveAttribute('aria-current', 'true');
   });
 });

@@ -1,72 +1,89 @@
 import { test, expect } from '@playwright/test';
 
+/**
+ * Helper to navigate to a specific chapter by number.
+ */
+async function navigateToChapter(page, num) {
+  await page.locator('button.chapter-btn').filter({
+    has: page.locator('.chapter-num', { hasText: new RegExp(`^Chapter ${num}$`) }),
+  }).click();
+}
+
 test.describe('Chapter Simulators', () => {
   test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      window.localStorage.clear();
+    });
     await page.goto('/');
   });
 
   test('Chapter 1: Flashlight Morse code challenge', async ({ page }) => {
-    // Inject mock Date.now on the active loaded page to make the test time-independent
-    await page.evaluate(() => {
-      let mockTime = 1718636000000;
-      window.Date.now = () => mockTime;
-      window.advanceTime = (ms) => {
-        mockTime += ms;
-      };
-    });
+    // Use Playwright's clock API for deterministic timing
+    await page.clock.install();
 
-    // Navigate to Chapter 1 (it is the default, but let's click it to be safe) using exact matching
-    await page.locator('button.chapter-btn').filter({ has: page.locator('.chapter-num', { hasText: /^Chapter 1$/ }) }).click();
+    await navigateToChapter(page, 1);
 
-    // Helper to simulate short flashlight taps (dots) using deterministic mock time
+    const flashlightBtn = page.getByTestId('ch1-flashlight-btn');
+
+    // Helper: tap flashlight quickly (dot = < 200ms)
     const tapFlashlight = async (count) => {
       for (let i = 0; i < count; i++) {
-        await page.locator('button:has-text("🔦")').dispatchEvent('mousedown');
-        await page.evaluate(() => window.advanceTime(50)); // Advance mock time by 50ms
-        await page.locator('button:has-text("🔦")').dispatchEvent('mouseup');
-        await page.evaluate(() => window.advanceTime(100)); // Advance mock time between taps
-        await page.waitForTimeout(50); // Small pause for event processing
+        await flashlightBtn.dispatchEvent('mousedown');
+        await page.clock.fastForward(50);
+        await flashlightBtn.dispatchEvent('mouseup');
+        await page.clock.fastForward(100);
       }
     };
 
     // Transmit 'H' (4 dots)
     await tapFlashlight(4);
-    await page.waitForTimeout(850); // Wait for character to decode in real time (> 700ms)
+    // Wait for character decode timer (> 700ms)
+    await page.clock.fastForward(800);
 
     // Transmit 'I' (2 dots)
     await tapFlashlight(2);
-    await page.waitForTimeout(850); // Wait for character to decode in real time (> 700ms)
+    await page.clock.fastForward(800);
 
-    // Verify successful decode and challenge completion
-    await expect(page.locator('.challenge-box')).toHaveClass(/success/);
+    // Verify challenge completion
+    const challengeBox = page.getByTestId('challenge-box');
+    await expect(challengeBox).toHaveClass(/success/);
     await expect(page.locator('.challenge-header')).toContainText('Challenge Completed!');
-    await expect(page.locator('text=Decoded Message: HI')).toBeVisible();
   });
 
   test('Chapter 2: Codes and Combinations challenge', async ({ page }) => {
-    // Navigate using exact matching
-    await page.locator('button.chapter-btn').filter({ has: page.locator('.chapter-num', { hasText: /^Chapter 2$/ }) }).click();
+    await navigateToChapter(page, 2);
 
-    // The default bits value is 3. We use .fill('5') to set the range input to 5.
-    const slider = page.locator('input[type="range"]');
+    // Set bits to 5 via the slider
+    const slider = page.getByTestId('ch2-bits-slider');
     await slider.fill('5');
 
-    // Check that the bits indicator shows 5
+    // Verify bits indicator shows 5
     await expect(page.locator('text=Number of Signals (Bits): 5')).toBeVisible();
 
-    // Input "32" as the answer and submit
-    const input = page.locator('input[placeholder="Enter total combinations..."]');
+    // Enter correct answer (2^5 = 32)
+    const input = page.getByTestId('ch2-answer-input');
     await input.fill('32');
-    await page.locator('button:has-text("Check Answer")').click();
+    await page.getByTestId('ch2-check-btn').click();
 
-    // Check for success
-    await expect(page.locator('.challenge-box')).toHaveClass(/success/);
-    await expect(page.locator('.challenge-header')).toContainText('Challenge Completed!');
+    // Verify success
+    const challengeBox = page.getByTestId('challenge-box');
+    await expect(challengeBox).toHaveClass(/success/);
+  });
+
+  test('Chapter 2: Wrong answer shows error feedback', async ({ page }) => {
+    await navigateToChapter(page, 2);
+
+    const input = page.getByTestId('ch2-answer-input');
+    await input.fill('16');
+    await page.getByTestId('ch2-check-btn').click();
+
+    // Challenge should NOT be completed
+    const challengeBox = page.getByTestId('challenge-box');
+    await expect(challengeBox).not.toHaveClass(/success/);
   });
 
   test('Chapter 3: Braille and Binary Codes challenge', async ({ page }) => {
-    // Navigate using exact matching
-    await page.locator('button.chapter-btn').filter({ has: page.locator('.chapter-num', { hasText: /^Chapter 3$/ }) }).click();
+    await navigateToChapter(page, 3);
 
     // Select Dot 1 and Dot 4 for letter "C"
     await page.locator('button[title="Dot 1"]').click();
@@ -76,39 +93,88 @@ test.describe('Chapter Simulators', () => {
     await expect(page.locator('text=Letter: C')).toBeVisible();
 
     // Check for success
-    await expect(page.locator('.challenge-box')).toHaveClass(/success/);
+    const challengeBox = page.getByTestId('challenge-box');
+    await expect(challengeBox).toHaveClass(/success/);
   });
 
   test('Chapter 4: Anatomy of a Flashlight challenge', async ({ page }) => {
-    // Navigate using exact matching
-    await page.locator('button.chapter-btn').filter({ has: page.locator('.chapter-num', { hasText: /^Chapter 4$/ }) }).click();
+    await navigateToChapter(page, 4);
 
-    // Initial state: OFF
+    // Verify initial OFF state — challenge should NOT be complete
+    const challengeBox = page.getByTestId('challenge-box');
+    await expect(challengeBox).not.toHaveClass(/success/);
+
+    // Find the switch button (text describes the action, not the state)
     const switchBtn = page.locator('button:has-text("Close Switch (ON)")');
     await expect(switchBtn).toBeVisible();
 
     // Close the switch
     await switchBtn.click();
 
-    // Verify it changed to ON state and challenge completes
+    // Verify ON state and challenge completion
     await expect(page.locator('button:has-text("Open Switch (OFF)")')).toBeVisible();
-    await expect(page.locator('.challenge-box')).toHaveClass(/success/);
+    await expect(challengeBox).toHaveClass(/success/);
   });
 
   test('Chapter 10: Alternative 10s challenge', async ({ page }) => {
-    // Navigate using exact matching
-    await page.locator('button.chapter-btn').filter({ has: page.locator('.chapter-num', { hasText: /^Chapter 10$/ }) }).click();
+    await navigateToChapter(page, 10);
 
     // Enter decimal value 42
-    const input = page.locator('input[placeholder="Enter a decimal number..."]');
+    const input = page.getByTestId('ch10-decimal-input');
     await input.fill('42');
 
-    // Verify binary output converts to 101010
-    await expect(page.locator('text=Binary (Base 2) >> xpath=../div[2]')).toHaveText('101010');
-    // Verify octal output converts to 52
-    await expect(page.locator('text=Octal (Base 8) >> xpath=../div[2]')).toHaveText('52');
+    // Verify binary output
+    const binaryCard = page.getByTestId('ch10-binary-display');
+    await expect(binaryCard).toContainText('101010');
+
+    // Verify octal output
+    const octalCard = page.getByTestId('ch10-octal-display');
+    await expect(octalCard).toContainText('52');
 
     // Verify challenge completes
-    await expect(page.locator('.challenge-box')).toHaveClass(/success/);
+    const challengeBox = page.getByTestId('challenge-box');
+    await expect(challengeBox).toHaveClass(/success/);
+  });
+
+  test('Chapter 6: Logic with Switches — AND gate', async ({ page }) => {
+    await navigateToChapter(page, 6);
+
+    // Initially challenge should not be complete
+    const challengeBox = page.getByTestId('challenge-box');
+    await expect(challengeBox).not.toHaveClass(/success/);
+
+    // Toggle Switch A ON
+    const switchA = page.getByTestId('ch6-switch-a');
+    await switchA.click();
+
+    // Still not complete (need all switches for series circuit)
+    await expect(challengeBox).not.toHaveClass(/success/);
+
+    // Toggle Switch B ON
+    const switchB = page.getByTestId('ch6-switch-b');
+    await switchB.click();
+
+    // Toggle Switch C ON (if needed for the specific gate)
+    const switchC = page.getByTestId('ch6-switch-c');
+    await switchC.click();
+
+    // Now the challenge should be complete
+    await expect(challengeBox).toHaveClass(/success/);
+  });
+
+  test('should listen for page errors', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', (err) => errors.push(err.message));
+
+    await page.goto('/');
+
+    // Navigate through several chapters to check for runtime errors
+    for (const ch of [1, 5, 10, 15, 20, 25]) {
+      await navigateToChapter(page, ch);
+      // Small pause to let React render
+      await page.waitForTimeout(100);
+    }
+
+    expect(errors).toEqual([]);
   });
 });

@@ -23,7 +23,7 @@ export const chaptersData = [
   {
     num: 4,
     title: "Anatomy of a Flashlight",
-    summary: "A flashlight is a simple electrical circuit. A battery (voltage source), copper wire (conductor), a bulb (resistance that glows), and a switch (controls the path). An closed circuit allows electrons to flow; an open circuit stops them. We examine how switches create logic gates.",
+    summary: "A flashlight is a simple electrical circuit. A battery (voltage source), copper wire (conductor), a bulb (resistance that glows), and a switch (controls the path). A closed circuit allows electrons to flow; an open circuit stops them. We examine how switches create logic gates.",
     challenge: "Close the switch to complete the circuit, allowing electrons to flow and lighting the bulb.",
     hint: "Click the switch in the circuit diagram to toggle it to the CLOSED (ON) position."
   },

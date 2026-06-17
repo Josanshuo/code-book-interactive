@@ -88,6 +88,8 @@ export function Chapter1({ onComplete }) {
   const [flashlightOn, setFlashlightOn] = useState(false);
   const [morseBuffer, setMorseBuffer] = useState('');
   const [decodedText, setDecodedText] = useState('');
+  const [completed, setCompleted] = useState(false);
+  const morseBufferRef = useRef('');
   const pressTime = useRef(0);
   const silenceStart = useRef(Date.now());
   const timerRef = useRef(null);
@@ -104,7 +106,12 @@ export function Chapter1({ onComplete }) {
     stopTone();
     const duration = Date.now() - pressTime.current;
     const symbol = duration < 200 ? '.' : '-';
-    setMorseBuffer(prev => prev + symbol);
+    
+    setMorseBuffer(prev => {
+      const next = prev + symbol;
+      morseBufferRef.current = next;
+      return next;
+    });
     silenceStart.current = Date.now();
     
     // Set timer to decode character after 700ms of silence
@@ -114,25 +121,30 @@ export function Chapter1({ onComplete }) {
     }, 700);
   };
 
+  // Check completion using useEffect to avoid state update in render warnings
+  useEffect(() => {
+    if (decodedText.includes("HI") && !completed) {
+      setCompleted(true);
+      onComplete(true);
+    }
+  }, [decodedText, completed, onComplete]);
+
   const decodeCharacter = () => {
-    setMorseBuffer(prev => {
-      if (!prev) return '';
-      const char = MORSE_MAP[prev] || '?';
-      setDecodedText(text => {
-        const nextText = text + char;
-        if (nextText.includes("HI")) {
-          onComplete(true);
-        }
-        return nextText;
-      });
-      return '';
-    });
+    const currentBuffer = morseBufferRef.current;
+    if (!currentBuffer) return;
+    const char = MORSE_MAP[currentBuffer] || '?';
+    
+    setDecodedText(prev => prev + char);
+    setMorseBuffer('');
+    morseBufferRef.current = '';
   };
 
   const resetLab = () => {
     setFlashlightOn(false);
     setMorseBuffer('');
     setDecodedText('');
+    setCompleted(false);
+    morseBufferRef.current = '';
     onComplete(false);
   };
 

@@ -1324,3 +1324,191 @@ body {
     min-height: 200px;
   }
 }
+
+/* ============================================================
+   KID-FRIENDLY SIMULATOR ENHANCEMENTS
+   ============================================================ */
+
+/* --- Celebration confetti (shown on challenge completion) --- */
+.celebration-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 9999;
+}
+.confetti-piece {
+  position: absolute;
+  top: -20px;
+  border-radius: 2px;
+  opacity: 0;
+  animation-name: confetti-fall;
+  animation-timing-function: cubic-bezier(0.3, 0.6, 0.5, 1);
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+@keyframes confetti-fall {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(var(--confetti-rotate));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--confetti-drift), 105vh) rotate(calc(var(--confetti-rotate) + 540deg));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .confetti-piece { animation-duration: 0.01ms !important; opacity: 0 !important; }
+}
+
+/* --- Friendly "kid intro" line used across simulators --- */
+.kid-intro {
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  max-width: 480px;
+  line-height: 1.5;
+}
+.kid-intro strong { color: var(--color-cyan); }
+
+/* --- Binary light bulbs (Chapter 10) --- */
+.bulb-row { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; }
+.bulb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.bulb-glass {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid rgba(148, 163, 184, 0.3);
+  background: #0c1322;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: var(--transition);
+}
+.bulb.on .bulb-glass {
+  background: radial-gradient(circle, var(--color-amber) 0%, #b45309 100%);
+  border-color: var(--color-amber);
+  box-shadow: 0 0 16px var(--color-amber-glow);
+}
+.bulb-value { font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-mono); }
+.bulb.on .bulb-value { color: var(--color-amber); }
+.bulb-bit { font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-muted); }
+
+/* --- Clickable bit cells (Chapters 12, 21) --- */
+.bit-cell {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: #111827;
+  color: white;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.bit-cell.on { box-shadow: 0 0 12px currentColor; }
+.bit-cell:focus-visible { outline: 2px solid var(--color-cyan); outline-offset: 2px; }
+
+/* --- Coins / place-value tokens (Chapter 9) --- */
+.coin-stack {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 2px;
+  min-height: 90px;
+  justify-content: flex-start;
+}
+.coin {
+  width: 20px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 30%, #fde68a, var(--color-amber));
+  box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  animation: coin-drop 0.25s ease-out;
+}
+@keyframes coin-drop {
+  0% { transform: translateY(-12px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* --- CPU bus diagram (Chapter 23) --- */
+.bus-stage {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  padding: 1.5rem 0 0.5rem;
+}
+.bus-line {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 52px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-cyan), var(--color-purple));
+  border-radius: 2px;
+  opacity: 0.5;
+}
+.bus-nodes { display: flex; justify-content: space-between; position: relative; }
+.bus-node {
+  flex: 1;
+  text-align: center;
+  padding: 0.5rem 0.2rem;
+  margin: 0 0.2rem;
+  border-radius: 8px;
+  border: 1px solid rgba(148,163,184,0.18);
+  background: var(--bg-elevated);
+  transition: var(--transition);
+}
+.bus-node.active {
+  border-color: var(--color-cyan);
+  background: rgba(34, 211, 238, 0.12);
+  box-shadow: 0 0 16px var(--color-cyan-glow);
+}
+.bus-node-abbr { font-weight: 800; font-family: var(--font-mono); color: var(--color-cyan); font-size: 0.95rem; }
+.bus-node-name { font-size: 0.65rem; color: var(--text-secondary); margin-top: 0.2rem; }
+.bus-packet {
+  position: absolute;
+  top: 40px;
+  width: 54px;
+  margin-left: -27px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #05202a;
+  background: var(--color-amber);
+  border-radius: 6px;
+  padding: 2px 0;
+  box-shadow: 0 0 14px var(--color-amber-glow);
+  transition: left 0.6s cubic-bezier(0.45, 0, 0.2, 1);
+  z-index: 2;
+}
+
+/* --- Name-in-braille mini cells (Chapter 3) --- */
+.braille-name-row { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+.braille-mini {
+  display: grid;
+  grid-template-columns: repeat(2, 10px);
+  grid-template-rows: repeat(3, 10px);
+  gap: 3px;
+  padding: 6px;
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  border: 1px solid rgba(148,163,184,0.15);
+}
+.braille-mini-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(148,163,184,0.18); }
+.braille-mini-dot.on { background: var(--color-cyan); box-shadow: 0 0 6px var(--color-cyan-glow); }
+
+/* Tooltip cue for plain-language jargon labels */
+.jargon { border-bottom: 1px dotted var(--text-muted); cursor: help; }

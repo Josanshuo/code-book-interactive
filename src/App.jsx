@@ -6,6 +6,8 @@ import {
 } from 'lucide-react';
 import { chaptersData } from './data/chaptersData';
 import ErrorBoundary from './components/ErrorBoundary';
+import Celebration from './components/Celebration';
+import { playSuccess } from './utils/audio';
 
 const MOBILE_BREAKPOINT = 900;
 
@@ -88,6 +90,7 @@ function App() {
   const [showHint, setShowHint] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const [celebrate, setCelebrate] = useState(false);
   const isMobileRef = useRef(false);
 
   // Track viewport size to auto-show sidebar on desktop
@@ -138,6 +141,24 @@ function App() {
   const completedCount = Object.keys(completedChapters).length;
   const progressPercent = Math.round((completedCount / chaptersData.length) * 100);
 
+  // Celebrate whenever the number of completed chapters goes UP (a fresh win).
+  // Initialized to the loaded count so restoring progress never triggers it.
+  const prevCompletedCount = useRef(completedCount);
+  useEffect(() => {
+    if (completedCount > prevCompletedCount.current) {
+      setCelebrate(true);
+      playSuccess();
+    }
+    prevCompletedCount.current = completedCount;
+  }, [completedCount]);
+
+  // Auto-dismiss the confetti so it never lingers.
+  useEffect(() => {
+    if (!celebrate) return;
+    const t = setTimeout(() => setCelebrate(false), 1900);
+    return () => clearTimeout(t);
+  }, [celebrate]);
+
   // Prev / Next sequential navigation
   const activeIndex = chaptersData.findIndex(c => c.num === activeChapterNum);
   const prevChapter = activeIndex > 0 ? chaptersData[activeIndex - 1] : null;
@@ -177,6 +198,8 @@ function App() {
 
   return (
     <div className="app-container">
+      {celebrate && <Celebration />}
+
       {/* Sidebar overlay for mobile */}
       <div
         className={`sidebar-overlay ${sidebarOpen ? 'visible' : ''}`}

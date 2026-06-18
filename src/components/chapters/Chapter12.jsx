@@ -1,23 +1,23 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import DisplayCard from '../shared/DisplayCard';
 
 export default function Chapter12({ onComplete }) {
   const [byte, setByte] = useState([0,0,0,0,0,0,0,0]);
   const wasCompleted = useRef(false);
 
+  // Functional update so quick successive clicks each see the latest byte.
   const toggleBit = (idx) => {
-    const nextByte = [...byte];
-    nextByte[idx] = nextByte[idx] ? 0 : 1;
-    setByte(nextByte);
+    setByte((prev) => prev.map((b, i) => (i === idx ? (b ? 0 : 1) : b)));
+  };
 
-    // Check challenge: Hex A5 = binary 10100101 = decimal 165
-    const val = parseInt(nextByte.join(''), 2);
-    const isComplete = val === 165;
+  // Check challenge: Hex A5 = binary 10100101 = decimal 165
+  useEffect(() => {
+    const isComplete = parseInt(byte.join(''), 2) === 165;
     if (isComplete !== wasCompleted.current) {
       wasCompleted.current = isComplete;
       onComplete(isComplete);
     }
-  };
+  }, [byte, onComplete]);
 
   const getHexValue = () => {
     const highNibble = parseInt(byte.slice(0, 4).join(''), 2).toString(16).toUpperCase();
@@ -29,17 +29,12 @@ export default function Chapter12({ onComplete }) {
     return parseInt(byte.join(''), 2);
   };
 
-  const handleSetHexChallenge = () => {
-    // Quick helper to auto-complete or let them set it
-    setByte([1,0,1,0,0,1,0,1]); // Set A5
-    if (!wasCompleted.current) {
-      wasCompleted.current = true;
-      onComplete(true);
-    }
-  };
-
   return (
     <div className="lab-container flex-column" style={{gap: '1.5rem', alignItems: 'center'}}>
+      <p className="kid-intro">
+        A <strong>byte</strong> is 8 tiny light switches. Programmers give every byte a
+        two-letter nickname in <strong>hex</strong>. Flip the switches to spell the secret code <strong>A5</strong>!
+      </p>
       {/* 8 Bits togglers grouped in nibbles */}
       <div className="flex-row" style={{gap: '2rem'}}>
         {/* High Nibble */}
@@ -102,8 +97,6 @@ export default function Chapter12({ onComplete }) {
         <DisplayCard label="Unsigned Dec" value={getDecimalValue()} color="var(--color-emerald)" testId="ch12-dec-display" />
         <DisplayCard label="Signed (2's)" value={getDecimalValue() >= 128 ? getDecimalValue() - 256 : getDecimalValue()} color="var(--color-amber)" testId="ch12-signed-display" />
       </div>
-
-      <button className="btn btn-secondary" data-testid="ch12-solve-btn" onClick={handleSetHexChallenge}>Solve Instantly (Set A5)</button>
     </div>
   );
 }

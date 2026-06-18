@@ -59,15 +59,15 @@ export const chaptersData = [
     num: 9,
     title: "Our Ten Digits",
     summary: "We count in Base 10 because we have 10 fingers. Positional number systems use place values based on powers of the base (1s, 10s, 100s, 1000s). We examine how digits represent values through position.",
-    challenge: "Increase the digit counters to represent the number 2048. Watch how the powers of 10 add up to the total value.",
-    hint: "Set the thousands position to 2, hundreds to 0, tens to 4, and ones to 8."
+    challenge: "Stack up the digits to show the current year, 2026. Watch the coins pile up and the powers of 10 add to the total.",
+    hint: "Set the thousands to 2, hundreds to 0, tens to 2, and ones to 6."
   },
   {
     num: 10,
     title: "Alternative 10s",
     summary: "What if we had only 8 fingers (octal) or 2 fingers (binary)? The math is exactly the same, but the base changes. In binary, place values are powers of 2 (1, 2, 4, 8, 16...). We convert numbers between these bases.",
-    challenge: "Input a decimal number that corresponds to the binary value '101010' and see it convert. What is this value in decimal?",
-    hint: "Binary '101010' is 32 + 8 + 2 = 42. Type 42 into the decimal input box."
+    challenge: "Build the number 42 by switching on light bulbs (or typing it), and see it turn into binary '101010'.",
+    hint: "Light up the bulbs worth 32, 8, and 2 — they add to 42. Binary '101010' = 32 + 8 + 2 = 42."
   },
   {
     num: 11,

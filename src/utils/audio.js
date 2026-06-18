@@ -67,6 +67,17 @@ export const startTone = (freq) => {
 };
 
 /**
+ * Play a short, happy ascending arpeggio to celebrate completing a challenge.
+ * Notes: C5, E5, G5, C6 (a major chord climbing up).
+ */
+export const playSuccess = () => {
+  const notes = [523.25, 659.25, 783.99, 1046.5];
+  notes.forEach((freq, i) => {
+    setTimeout(() => playTone(freq, 200), i * 90);
+  });
+};
+
+/**
  * Stop the currently playing continuous tone.
  */
 export const stopTone = () => {

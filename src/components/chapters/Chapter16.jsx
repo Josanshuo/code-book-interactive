@@ -25,6 +25,16 @@ export default function Chapter16({ onComplete }) {
 
   return (
     <div className="lab-container flex-column" style={{gap: '1.5rem', alignItems: 'center'}}>
+      <p className="kid-intro">
+        Computers don’t really know how to subtract! Their clever trick is to{' '}
+        <strong
+          className="jargon"
+          title="Flip every bit (0↔1) and add 1. This turns a number into its negative, so the adder can 'subtract' by adding."
+        >
+          flip-and-add-one
+        </strong>{' '}
+        — then they just <strong>add</strong>. Try 12 − 5.
+      </p>
       <div className="grid-2" style={{width: '100%', maxWidth: '500px'}}>
         <div className="glass-panel flex-column" style={{padding: '1rem'}}>
           <label>Operand A (Decimal): <strong>{valA}</strong></label>

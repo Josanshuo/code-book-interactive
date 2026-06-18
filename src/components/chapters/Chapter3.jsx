@@ -12,8 +12,20 @@ const BRAILLE_TO_CHAR = {
   "1,3,5,6": "Z"
 };
 
+// Reverse lookup: letter -> set of raised dot numbers, e.g. "C" -> {1,4}.
+const CHAR_TO_DOTS = Object.fromEntries(
+  Object.entries(BRAILLE_TO_CHAR).map(([dots, char]) => [
+    char,
+    new Set(dots.split(',').map(Number)),
+  ])
+);
+
+// Grid fills row-by-row, so render dots in visual order: 1,4 / 2,5 / 3,6.
+const MINI_ORDER = [1, 4, 2, 5, 3, 6];
+
 export default function Chapter3({ onComplete }) {
   const [dots, setDots] = useState([false, false, false, false, false, false]); // Dot 1 to 6 (1-based index 1-6)
+  const [name, setName] = useState('');
   const wasCompleted = useRef(false);
 
   const toggleDot = (idx) => {
@@ -68,6 +80,38 @@ export default function Chapter3({ onComplete }) {
         <div data-testid="ch3-letter-display" style={{fontSize: '2rem', color: 'var(--color-cyan)', fontWeight: 'bold', marginTop: '0.5rem'}}>Letter: {getActiveCharacter()}</div>
       </div>
       <button className="btn btn-secondary" data-testid="ch3-clear-btn" onClick={resetLab}><RotateCcw size={16} /> Clear</button>
+
+      {/* Spell-your-name mode: type letters and see them in Braille */}
+      <div className="glass-panel flex-column" style={{ padding: '1rem', gap: '0.75rem', alignItems: 'center', width: '100%', maxWidth: '420px' }}>
+        <label style={{ fontWeight: 600, fontSize: '0.9rem' }}>✨ Type your name to see it in Braille:</label>
+        <input
+          type="text"
+          data-testid="ch3-name-input"
+          value={name}
+          onChange={(e) => setName(e.target.value.toUpperCase().replace(/[^A-Z ]/g, '').slice(0, 12))}
+          placeholder="e.g. SAM"
+          className="btn btn-secondary text-mono"
+          style={{ textAlign: 'center', letterSpacing: '0.15em', width: '100%' }}
+        />
+        {name.trim() && (
+          <div className="braille-name-row" data-testid="ch3-name-braille">
+            {name.split('').map((ch, i) => {
+              if (ch === ' ') return <div key={i} style={{ width: '14px' }} />;
+              const raised = CHAR_TO_DOTS[ch] || new Set();
+              return (
+                <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                  <div className="braille-mini">
+                    {MINI_ORDER.map((dotNum) => (
+                      <span key={dotNum} className={`braille-mini-dot ${raised.has(dotNum) ? 'on' : ''}`} />
+                    ))}
+                  </div>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>{ch}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

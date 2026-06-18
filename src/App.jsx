@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import {
   Zap, CheckCircle2, AlertCircle, HelpCircle,
   BookOpen, Trophy, Compass, Code as CodeIcon,
-  Menu, X, Search, ChevronLeft, ChevronRight
+  Menu, X, Search, ChevronLeft, ChevronRight, ExternalLink
 } from 'lucide-react';
 import { chaptersData } from './data/chaptersData';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -347,6 +347,28 @@ function App() {
             <div className="summary-text">
               <p>{activeChapter.summary}</p>
             </div>
+
+            {activeChapter.companion && (
+              <div className="companion-links">
+                <span className="companion-label">
+                  <BookOpen size={13} /> Author's interactive version
+                </span>
+                <div className="companion-link-row">
+                  {activeChapter.companion.map((link) => (
+                    <a
+                      key={link.url}
+                      className="companion-link"
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {link.label}
+                      <ExternalLink size={13} aria-hidden="true" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className={`challenge-box ${completedChapters[activeChapterNum] ? 'success' : ''}`} data-testid="challenge-box">
               <div className="challenge-header">

@@ -1512,3 +1512,44 @@ body {
 
 /* Tooltip cue for plain-language jargon labels */
 .jargon { border-bottom: 1px dotted var(--text-muted); cursor: help; }
+
+/* --- Author's companion-site links (left panel) --- */
+.companion-links {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: var(--border-subtle);
+}
+.companion-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.companion-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+.companion-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--color-cyan);
+  background: rgba(34, 211, 238, 0.08);
+  color: var(--color-cyan);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.companion-link:hover {
+  background: rgba(34, 211, 238, 0.16);
+  box-shadow: 0 0 12px var(--color-cyan-glow);
+}

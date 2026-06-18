@@ -1,4 +1,30 @@
-export const chaptersData = [
+// Official companion site by the author, Charles Petzold. These are his own
+// interactive (HTML5 canvas) versions of the book's circuit diagrams. Keyed by
+// our chapter number; only chapters he actually published a page for are listed.
+// Verified against https://www.codehiddenlanguage.com (June 2026).
+const COMPANION_BASE = 'https://www.codehiddenlanguage.com';
+const COMPANION_LINKS = {
+  6:  [{ label: 'Interactive circuits', url: `${COMPANION_BASE}/Chapter06` }],
+  8:  [{ label: 'Interactive circuits', url: `${COMPANION_BASE}/Chapter08` }],
+  10: [{ label: 'Interactive demo', url: `${COMPANION_BASE}/Chapter10` }],
+  14: [{ label: 'Interactive circuits', url: `${COMPANION_BASE}/Chapter14` }],
+  15: [{ label: 'Interactive circuits', url: `${COMPANION_BASE}/Chapter15` }],
+  16: [{ label: 'Interactive circuits', url: `${COMPANION_BASE}/Chapter16` }],
+  17: [{ label: 'Interactive circuits', url: `${COMPANION_BASE}/Chapter17` }],
+  18: [{ label: 'Interactive circuits', url: `${COMPANION_BASE}/Chapter18` }],
+  19: [{ label: 'Interactive circuits', url: `${COMPANION_BASE}/Chapter19` }],
+  20: [{ label: 'Interactive circuits', url: `${COMPANION_BASE}/Chapter20` }],
+  21: [{ label: 'Interactive circuits', url: `${COMPANION_BASE}/Chapter21` }],
+  22: [{ label: 'Interactive circuits', url: `${COMPANION_BASE}/Chapter22` }],
+  23: [{ label: 'Interactive circuits', url: `${COMPANION_BASE}/Chapter23` }],
+  24: [{ label: 'Interactive CPU', url: `${COMPANION_BASE}/Chapter24` }],
+  27: [
+    { label: 'Assembly Language', url: `${COMPANION_BASE}/Chapter27a` },
+    { label: 'JavaScript', url: `${COMPANION_BASE}/Chapter27b` },
+  ],
+};
+
+const RAW_CHAPTERS = [
   {
     num: 1,
     title: "Best Friends",
@@ -196,3 +222,8 @@ export const chaptersData = [
     hint: "Type 'petzold.com' in the address bar and click Go. Watch the packets route through the visual nodes."
   }
 ];
+
+// Attach the author's companion links to the chapters that have them.
+export const chaptersData = RAW_CHAPTERS.map((ch) =>
+  COMPANION_LINKS[ch.num] ? { ...ch, companion: COMPANION_LINKS[ch.num] } : ch
+);

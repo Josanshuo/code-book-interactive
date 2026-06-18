@@ -90,14 +90,18 @@ export default function Chapter1({ onComplete }) {
   return (
     <div className="lab-container">
       <div className="neighborhood">
-        <div className="house">
-          <div className={`window ${flashlightOn ? 'lit' : ''}`}></div>
-          <div style={{color: 'white', position: 'absolute', bottom: '-25px', width: '100%', textAlign: 'center', fontSize: '0.8rem'}}>House A (You)</div>
+        <div className="house-unit">
+          <div className="house">
+            <div className={`window ${flashlightOn ? 'lit' : ''}`}></div>
+          </div>
+          <div className="house-label">House A (You)</div>
         </div>
         <div className={`light-beam ltr ${flashlightOn ? 'active' : ''}`} style={{display: flashlightOn ? 'block' : 'none'}}></div>
-        <div className="house">
-          <div className={`window ${flashlightOn ? 'lit' : ''}`} style={{boxShadow: flashlightOn ? '0 0 30px var(--color-cyan)' : 'none', backgroundColor: flashlightOn ? 'var(--color-cyan)' : ''}}></div>
-          <div style={{color: 'white', position: 'absolute', bottom: '-25px', width: '100%', textAlign: 'center', fontSize: '0.8rem'}}>House B (Friend)</div>
+        <div className="house-unit">
+          <div className="house">
+            <div className={`window ${flashlightOn ? 'lit' : ''}`} style={{boxShadow: flashlightOn ? '0 0 30px var(--color-cyan)' : 'none', backgroundColor: flashlightOn ? 'var(--color-cyan)' : ''}}></div>
+          </div>
+          <div className="house-label">House B (Friend)</div>
         </div>
       </div>
       

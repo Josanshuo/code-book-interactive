@@ -918,6 +918,23 @@ body {
   overflow: hidden;
 }
 
+/* House + its caption stacked, so the label sits in normal flow and is
+   never clipped by the neighborhood's overflow (the old absolute label hung
+   below the houses and got cut off on mobile). */
+.house-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.house-label {
+  color: #fff;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  text-align: center;
+}
+
 .house {
   width: 90px;
   height: 100px;
@@ -925,6 +942,7 @@ body {
   position: relative;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
+  flex-shrink: 0;
 }
 
 .house::after {
@@ -1326,6 +1344,12 @@ body {
     height: 20px;
     top: 20px;
     left: 25px;
+  }
+
+  /* Houses are shorter here, so drop the connecting beam to line up with
+     the windows instead of floating below them. */
+  .light-beam {
+    top: 88px;
   }
 
   .grid-4 {

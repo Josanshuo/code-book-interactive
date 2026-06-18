@@ -1159,6 +1159,22 @@ body {
   height: auto;
 }
 
+/* iOS auto-zooms into any form control with a font-size below 16px when it
+   gains focus. That zoom then scrolls the fixed header out of the visual
+   viewport, forcing the user to pinch back out. Enforce a 16px minimum on
+   touch-width screens so focusing an input never triggers the zoom. The
+   `input.btn` specificity beats the `.btn` rule (0.9rem); inputs with a
+   larger inline font-size keep it (inline wins and is already ≥ 16px). */
+@media (max-width: 900px) {
+  input.btn,
+  input:not([type="range"]),
+  textarea,
+  select,
+  .terminal-input {
+    font-size: 16px;
+  }
+}
+
 /* ---- Breakpoint: ≤ 900px — Sidebar collapses ---- */
 @media (max-width: 900px) {
   .sidebar-toggle {

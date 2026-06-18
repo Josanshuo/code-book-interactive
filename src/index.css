@@ -601,9 +601,14 @@ body {
 }
 
 @media (max-width: 1200px) {
+  /* Stack the panels and let the whole workspace be the single scroll
+     container. Each panel sizes to its content (flex: none) and drops its
+     own internal scroll so the page scrolls as one — instead of trapping the
+     summary or the simulator inside a squished, separately-scrolling box. */
   .workspace {
     flex-direction: column;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -620,7 +625,8 @@ body {
 @media (max-width: 1200px) {
   .left-panel {
     width: 100%;
-    flex-shrink: 1;
+    flex: none;          /* size to content; don't get squeezed by the simulator */
+    overflow: visible;   /* no nested scroll — the workspace scrolls instead */
   }
 }
 
@@ -634,6 +640,7 @@ body {
 
 @media (max-width: 1200px) {
   .right-panel {
+    flex: none;          /* size to the simulator's content height */
     overflow: visible;
   }
 }
@@ -751,6 +758,15 @@ body {
   padding: 1.5rem;
   overflow: auto;
   min-height: 400px;
+}
+
+/* In the stacked mobile layout the workspace is the single scroll container,
+   so the simulator expands to its content instead of scrolling internally.
+   Placed after the base rule above so it reliably wins the cascade. */
+@media (max-width: 1200px) {
+  .lab-container {
+    overflow: visible;
+  }
 }
 
 /* UI Elements */

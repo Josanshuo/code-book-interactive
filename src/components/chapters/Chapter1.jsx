@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { RotateCcw } from 'lucide-react';
 import { startTone, stopTone } from '../../utils/audio';
+import { usePressAndHold } from '../../hooks/usePressAndHold';
 
 // MORSE CODE MAP
 const MORSE_MAP = {
@@ -52,6 +53,8 @@ export default function Chapter1({ onComplete }) {
     }, 700);
   };
 
+  const flashlightPress = usePressAndHold(handlePressStart, handlePressEnd);
+
   // Check completion using useEffect to avoid state update in render warnings
   useEffect(() => {
     if (decodedText.includes("HI") && !completed) {
@@ -101,13 +104,10 @@ export default function Chapter1({ onComplete }) {
       <div className="flex-column" style={{marginTop: '2rem', alignItems: 'center'}}>
         <div style={{display: 'flex', gap: '1rem'}}>
           <button 
-            className="btn btn-primary" 
+            className="btn btn-primary"
             data-testid="ch1-flashlight-btn"
-            style={{padding: '2rem', borderRadius: '50%', width: '100px', height: '100px', fontSize: '1.2rem', boxShadow: flashlightOn ? '0 0 20px var(--color-cyan)' : 'none'}}
-            onMouseDown={handlePressStart}
-            onMouseUp={handlePressEnd}
-            onTouchStart={handlePressStart}
-            onTouchEnd={handlePressEnd}
+            style={{padding: '2rem', borderRadius: '50%', width: '100px', height: '100px', fontSize: '1.2rem', boxShadow: flashlightOn ? '0 0 20px var(--color-cyan)' : 'none', ...flashlightPress.touchStyle}}
+            {...flashlightPress.handlers}
           >
             🔦
           </button>

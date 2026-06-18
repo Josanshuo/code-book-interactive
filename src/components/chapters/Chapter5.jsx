@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { startTone, stopTone } from '../../utils/audio';
+import { usePressAndHold } from '../../hooks/usePressAndHold';
 
 export default function Chapter5({ onComplete }) {
   const [keyActive, setKeyActive] = useState(false);
@@ -17,6 +18,8 @@ export default function Chapter5({ onComplete }) {
     setRxSounderActive(false);
     stopTone();
   };
+
+  const keyPress = usePressAndHold(handleKeyDown, handleKeyUp);
 
   return (
     <div className="lab-container flex-column" style={{gap: '1.5rem', alignItems: 'center'}}>
@@ -54,11 +57,8 @@ export default function Chapter5({ onComplete }) {
       <button 
         className="btn btn-primary"
         data-testid="ch5-telegraph-key"
-        style={{padding: '1.5rem 2.5rem', fontSize: '1.1rem', userSelect: 'none'}}
-        onMouseDown={handleKeyDown}
-        onMouseUp={handleKeyUp}
-        onTouchStart={handleKeyDown}
-        onTouchEnd={handleKeyUp}
+        style={{padding: '1.5rem 2.5rem', fontSize: '1.1rem', ...keyPress.touchStyle}}
+        {...keyPress.handlers}
       >
         Telegraph Key (Press &amp; Hold)
       </button>

@@ -36,7 +36,7 @@ export default function Chapter12({ onComplete }) {
         two-letter nickname in <strong>hex</strong>. Flip the switches to spell the secret code <strong>A5</strong>!
       </p>
       {/* 8 Bits togglers grouped in nibbles */}
-      <div className="flex-row" style={{gap: '2rem'}}>
+      <div className="flex-row" style={{gap: '2rem', flexWrap: 'wrap', justifyContent: 'center'}}>
         {/* High Nibble */}
         <div className="glass-panel flex-column" style={{padding: '1rem', alignItems: 'center', borderColor: 'var(--color-purple)'}}>
           <div style={{fontSize: '0.75rem', color: 'var(--color-purple)', fontWeight: 700}}>HIGH NIBBLE</div>

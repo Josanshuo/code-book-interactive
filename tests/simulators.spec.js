@@ -25,12 +25,14 @@ test.describe('Chapter Simulators', () => {
 
     const flashlightBtn = page.getByTestId('ch1-flashlight-btn');
 
-    // Helper: tap flashlight quickly (dot = < 200ms)
+    // Helper: tap flashlight quickly (dot = < 200ms).
+    // The button uses Pointer Events (unifies mouse + touch, avoids the
+    // touch/mouse double-fire), so the test drives it the same way.
     const tapFlashlight = async (count) => {
       for (let i = 0; i < count; i++) {
-        await flashlightBtn.dispatchEvent('mousedown');
+        await flashlightBtn.dispatchEvent('pointerdown');
         await page.clock.fastForward(50);
-        await flashlightBtn.dispatchEvent('mouseup');
+        await flashlightBtn.dispatchEvent('pointerup');
         await page.clock.fastForward(100);
       }
     };

@@ -42,7 +42,11 @@ export default function Chapter13({ onComplete }) {
           className="btn btn-secondary text-mono" 
           data-testid="ch13-text-input"
           style={{background: '#090d16', border: '1px solid #1f2937', padding: '0.75rem 1rem', width: '100%', color: 'white', textAlign: 'center', fontSize: '1.2rem'}}
-          placeholder="Type here..." 
+          placeholder="Type here..."
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="characters"
+          spellCheck={false}
           value={inputText}
           onChange={handleInputChange}
         />

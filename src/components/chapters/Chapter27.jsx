@@ -52,10 +52,14 @@ export default function Chapter27({ onComplete }) {
         <label>High-Level Code (JavaScript-like):</label>
         <input 
           data-testid="ch27-code-input"
-          type="text" 
-          className="btn btn-secondary text-mono" 
-          value={code} 
-          onChange={(e) => setCode(e.target.value)} 
+          type="text"
+          className="btn btn-secondary text-mono"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
           style={{background: '#090d16', border: '1px solid #1f2937', padding: '0.75rem 1rem', width: '100%', color: 'white', fontSize: '1.1rem'}}
         />
         <button data-testid="ch27-compile-btn" className="btn btn-primary" onClick={handleCompile}>Compile Code</button>

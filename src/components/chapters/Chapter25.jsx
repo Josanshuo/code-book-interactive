@@ -52,9 +52,13 @@ export default function Chapter25({ onComplete }) {
           <div style={{fontWeight: 700}}>Keyboard Controller</div>
           <input 
             data-testid="ch25-keyboard-input"
-            type="text" 
-            className="btn btn-secondary text-mono" 
-            placeholder="Type key here..." 
+            type="text"
+            className="btn btn-secondary text-mono"
+            placeholder="Type key here..."
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="characters"
+            spellCheck={false}
             onKeyDown={handleKeyPress}
             style={{background: '#090d16', border: '1px solid #1f2937', padding: '0.5rem', color: 'white', textAlign: 'center'}}
           />

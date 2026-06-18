@@ -59,13 +59,15 @@ export default function Chapter2({ onComplete }) {
         </div>
 
         <form onSubmit={handleCheck} className="flex-row" style={{alignItems: 'center', gap: '1rem'}}>
-          <input 
-            type="number" 
-            className="btn btn-secondary" 
-            placeholder="Enter total combinations..." 
+          <input
+            type="number"
+            inputMode="numeric"
+            className="btn btn-secondary"
+            placeholder="Enter total combinations..."
             value={inputVal}
             data-testid="ch2-answer-input"
             onChange={(e) => setInputVal(e.target.value)}
+            autoComplete="off"
             style={{background: '#111827', border: '1px solid #374151', padding: '0.6rem 1rem', width: '220px'}}
           />
           <button type="submit" className="btn btn-primary" data-testid="ch2-check-btn">Check Answer</button>

@@ -69,10 +69,14 @@ export default function Chapter26({ onComplete }) {
           <span className="terminal-prompt">C:\&gt;</span>
           <input 
             data-testid="ch26-terminal-input"
-            type="text" 
+            type="text"
             className="terminal-input"
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
             autoFocus
           />
         </form>

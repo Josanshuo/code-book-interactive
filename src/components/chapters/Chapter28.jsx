@@ -49,11 +49,16 @@ export default function Chapter28({ onComplete }) {
       <form onSubmit={handleGo} className="flex-row">
         <input 
           data-testid="ch28-url-input"
-          type="text" 
-          className="btn btn-secondary text-mono" 
-          placeholder="Enter URL e.g. petzold.com..." 
+          type="text"
+          inputMode="url"
+          className="btn btn-secondary text-mono"
+          placeholder="Enter URL e.g. petzold.com..."
           value={url}
           onChange={(e) => setUrl(e.target.value)}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
           style={{background: '#090d16', border: '1px solid #1f2937', padding: '0.75rem 1rem', flex: 1, color: 'white'}}
         />
         <button data-testid="ch28-request-btn" type="submit" className="btn btn-primary" disabled={loading}>Request</button>

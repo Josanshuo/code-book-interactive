@@ -69,12 +69,14 @@ export default function Chapter10({ onComplete }) {
         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>…or just type a decimal number:</label>
         <input
           type="number"
+          inputMode="numeric"
           className="btn btn-secondary"
           data-testid="ch10-decimal-input"
           style={{ background: '#090d16', border: '1px solid #1f2937', padding: '0.75rem 1rem', width: '100%', color: 'white', textAlign: 'center', fontSize: '1.2rem' }}
           placeholder="Enter a decimal number..."
           value={decInput}
           onChange={handleInputChange}
+          autoComplete="off"
         />
       </div>
 

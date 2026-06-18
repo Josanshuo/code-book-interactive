@@ -91,6 +91,10 @@ export default function Chapter3({ onComplete }) {
           onChange={(e) => setName(e.target.value.toUpperCase().replace(/[^A-Z ]/g, '').slice(0, 12))}
           placeholder="e.g. SAM"
           className="btn btn-secondary text-mono"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="characters"
+          spellCheck={false}
           style={{ textAlign: 'center', letterSpacing: '0.15em', width: '100%' }}
         />
         {name.trim() && (
